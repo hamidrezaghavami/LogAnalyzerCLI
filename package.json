@@ -1,0 +1,23 @@
+{
+  "name": "loganalyzercli",
+  "version": "1.0.0",
+  "description": "A simple Log Analyzer CLI ",
+  "keywords": [
+    "nodejs"
+  ],
+  "homepage": "https://github.com/hamidrezaghavami/LogAnalyzerCLI#readme",
+  "bugs": {
+    "url": "https://github.com/hamidrezaghavami/LogAnalyzerCLI/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hamidrezaghavami/LogAnalyzerCLI.git"
+  },
+  "license": "MIT",
+  "author": "Hamid Reza Ghavami",
+  "type": "commonjs",
+  "main": "LogAnalyzerCLI.js",
+  "scripts": {
+    "test": "test"
+  }
+}
