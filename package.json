@@ -1,6 +1,12 @@
 {
   "name": "loganalyzercli",
   "version": "1.0.0",
+  "bin": { 
+    "mycli": "./LogAnalyzerCLI.js"
+  },
+  "dependencies": {
+    "commander": "^11.0.0"
+  },
   "description": "A simple Log Analyzer CLI ",
   "keywords": [
     "nodejs"
