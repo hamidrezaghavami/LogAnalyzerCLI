@@ -24,7 +24,16 @@ function readLogFiles(folderPath) {
 }
 
 // function parse log 
-function parseLog(rawData) { 
+function parseLog(logFilePath = path.join(__dirname, 'organizer.log')) { 
+    if (fs.readFileSync(logFilePath)) { 
+        console.log('No log file found');
+        return;
+    }
+
+    const logContent = fs.readFileSync(logFilePath, 'utf-8');
+    const entries = logContent;
+    .split('\n');
+    .filter(line => line.trim() !== ''); // we have error ???
 
 }
 
