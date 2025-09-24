@@ -25,16 +25,18 @@ function readLogFiles(folderPath) {
 
 // function parse log 
 function parseLog(logFilePath = path.join(__dirname, 'organizer.log')) { 
-    if (fs.readFileSync(logFilePath)) { 
+    if (!fs.existsSync(logFilePath)) { 
         console.log('No log file found');
-        return;
+        return [];
     }
 
     const logContent = fs.readFileSync(logFilePath, 'utf-8');
-    const entries = logContent;
-    .split('\n');
-    .filter(line => line.trim() !== ''); // we have error ???
 
+    const entries = logContent
+    .split('\n')
+    .filter(line => line.trim() !== '');
+
+    return entries;
 }
 
 // function Analyze Logs
@@ -57,5 +59,8 @@ function filterByDate(logs, start, end) {
     sortBySeverity(logs);
 }
 
+// example usage:
 const logs = readLogFiles('./logs');
+const parsed = parseLog('./logs/organizer.log');
 console.log(logs);
+console.log(parsed);
