@@ -1,24 +1,20 @@
-import fs, { readFileSync } from 'fs';
+import chalk from 'chalk';
+import fs from 'fs';
 import path from 'path';
 
 // function read log files
 function readLogFiles(folderPath) { 
-    if (!fs.readFileSync(folderPath)) { 
+    if (!fs.existsSync(folderPath)) { 
         console.log(`Folder does not exist ${folderPath}`);
         return [];
     }
 
-    // get all files in the folder
     const files = fs.readdirSync(folderPath);
+    const logFiles = files.filter(file => path.extname(file) === '.log');
 
-    // filter .log files
-    const logFilters = files.filter(file => path.extname(file) === '.log');
-
-    // read each log file
     const logs = logFiles.map(file => {
         const fullPath = path.join(folderPath, file);
-        const content = fs.readFileSync(fullPath, 'utf-8');
-        return content;
+        return fs.readFileSync(fullPath, 'utf-8');
     });
     return logs;
 }
@@ -40,27 +36,58 @@ function parseLog(logFilePath = path.join(__dirname, 'organizer.log')) {
 }
 
 // function Analyze Logs
-function analyzeLog(parsedLogs, filters) { 
+function analyzeLog(parsedLogs, filters = {}) { 
+    let filteredLogs = parsedLogs;
 
+    if (filters.severity) { 
+        filteredLogs = filteredLogs.filter(log => log.includes(filters.severity));
+    }
+
+    if (filters.startDate || filters.endDate) { 
+        filteredLogs = filteredLogs.filter(log => {
+            const datePart = log.split(" ")[0];
+            const logDate = new Date(datePart);
+            
+            if (filters.startDate && logDate < new Date(filters.startDate)) return false;
+            if (filters.endDate && logDate > new Date(filters.endDate)) return false;
+            return true;
+        });
+    }
+
+    const summary = { 
+        total: filteredLogs.length, 
+        errors: filteredLogs.filter(l => l.includes("ERROR")).length,
+        warnings: filteredLogs.filter(l => l.includes("WARN")).length,
+        info: filteredLogs.filter(l => l.includes("INFO")).length,
+    };
+    return { filteredLogs, summary };
 }
 
 // function format output
 function formatOutPut(analysisResult) {
+    const summary = analysisResult.summary;
 
+    const output = `
+    Total logs: ${summary.total}
+    Errors: ${summary.errors}
+    warnings: ${summary.warnings}
+    Info: ${summary.info}
+    `;
+
+    return output;
 }
 
 // function Display
 function displayReport(formattedReport) { 
-
-}
-
-// function filter by date
-function filterByDate(logs, start, end) { 
-    sortBySeverity(logs);
+    console.log(chalk.blue(formattedReport));
 }
 
 // example usage:
 const logs = readLogFiles('./logs');
-const parsed = parseLog('./logs/organizer.log');
-console.log(logs);
-console.log(parsed);
+const parsedLogs = parseLog('./logs/organizer.log');
+
+const filters = { severity: 'ERROR', startDate: '2025-09-01', endDate: '2025-09-25' };
+
+const result = analyzeLog(parsedLogs, filters);
+const formatted = formatOutPut(result);
+displayReport(formatted);
