@@ -12,28 +12,17 @@ function readLogFiles(folderPath) {
     const files = fs.readdirSync(folderPath);
     const logFiles = files.filter(file => path.extname(file) === '.log');
 
-    const logs = logFiles.map(file => {
-        const fullPath = path.join(folderPath, file);
-        return fs.readFileSync(fullPath, 'utf-8');
-    });
+    const logs = logFiles.map(file => fs.readFileSync(path.join(folderPath, file), 'utf-8')); // simplify
     return logs;
 }
 
 // function parse log 
-function parseLog(logFilePath = path.join(__dirname, 'organizer.log')) { 
-    if (!fs.existsSync(logFilePath)) { 
-        console.log('No log file found');
-        return [];
-    }
-
-    const logContent = fs.readFileSync(logFilePath, 'utf-8');
-
-    const entries = logContent
-    .split('\n')
-    .filter(line => line.trim() !== '');
-
-    return entries;
-}
+const parseLog = (logFilePath = path.join(__dirname, 'organizer.log')) =>
+    !fs.existsSync(logFilePath)
+        ? fs.existsSync(logFilePath, 'utf-8')
+        .split('\n')
+        .filter(line => line.trim())
+        : (console.log('No log file found'), []); // simplifing 13 lines to 6
 
 // function Analyze Logs
 function analyzeLog(parsedLogs, filters = {}) { 
