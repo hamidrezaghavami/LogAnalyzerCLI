@@ -17,39 +17,31 @@ function readLogFiles(folderPath) {
 }
 
 // function parse log 
-const parseLog = (logFilePath = path.join(__dirname, 'organizer.log')) =>
-    !fs.existsSync(logFilePath)
-        ? fs.existsSync(logFilePath, 'utf-8')
-        .split('\n')
-        .filter(line => line.trim())
-        : (console.log('No log file found'), []); // simplifing 13 lines to 6
+function parseLog(logFilePath = path.join(__dirname, 'organizer.log')) {
+    if (!fs.existsSync(logFilePath)) { 
+        console.log('No  log file found') // 13 lines refactor to 9
+        return [];
+    }
+    return fs.readFileSync(logFilePath, 'utf-8')
+    .split('\n')
+    .filter(line => line.trim());
+}
 
 // function Analyze Logs
-function analyzeLog(parsedLogs, filters = {}) { 
-    let filteredLogs = parsedLogs;
+function analyzeLog(parsedLogs, { severity, startDate, endDate}) { 
+    const filteredLogs = parsedLogs.filter(log => { 
+        const date = Date(log.split(" "[0]));
+        return ( !severity || log.includes(severity)) &&
+        (!startDate || date >= new Date(startDate)) &&
+        (!endDate || date >= new Date(endDate));
+    });
 
-    if (filters.severity) { 
-        filteredLogs = filteredLogs.filter(log => log.includes(filters.severity));
-    }
-
-    if (filters.startDate || filters.endDate) { 
-        filteredLogs = filteredLogs.filter(log => {
-            const datePart = log.split(" ")[0];
-            const logDate = new Date(datePart);
-            
-            if (filters.startDate && logDate < new Date(filters.startDate)) return false;
-            if (filters.endDate && logDate > new Date(filters.endDate)) return false;
-            return true;
-        });
-    }
-
-    const summary = { 
-        total: filteredLogs.length, 
-        errors: filteredLogs.filter(l => l.includes("ERROR")).length,
-        warnings: filteredLogs.filter(l => l.includes("WARN")).length,
-        info: filteredLogs.filter(l => l.includes("INFO")).length,
-    };
-    return { filteredLogs, summary };
+    const summary = ["ERROR", "WARN", "INFO"].reduce((acc, level) => { 
+        acc[level.toLowerCase()] = filteredLogs.filter(l => l.includes(level)).length;
+        return acc;
+    }, { total: filteredLogs.length });
+    
+    return { filteredLogs, summary }; // 24 lines refactor to 13
 }
 
 // function format output

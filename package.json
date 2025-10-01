@@ -21,7 +21,7 @@
   },
   "license": "MIT",
   "author": "Hamid Reza Ghavami",
-  "type": "commonjs",
+  "type": "module",
   "main": "LogAnalyzerCLI.js",
   "scripts": {
     "test": "test"
