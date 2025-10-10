@@ -11,9 +11,6 @@ A simple and efficient command-line tool for analyzing log files. Designed to he
 ## Installation
 ```bash
 git clone https://github.com/hamidrezaghavami/LogAnalyzerCLI.git
-cd LogAnalyzerCLI
-<<<<<<< HEAD
+cd LogAnalyzerCLI 
+
 npm install
-=======
-npm install
->>>>>>> fb3c34c (add new files)
